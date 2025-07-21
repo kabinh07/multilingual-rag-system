@@ -1,0 +1,21 @@
+import os
+# import dotenv
+from dotenv import load_dotenv
+
+# dotenv.load_dotenv()
+load_dotenv()
+
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://0.0.0.0:11434")
+LLM_MODEL = os.getenv("LLM_MODEL", "qwen3:0.6b")
+LLM_TEMP = os.getenv("LLM_TEMP", 0.0)
+EMB_MODEL = os.getenv("EMB_MODEL", "Qwen/Qwen3-Embedding-0.6B") #intfloat/multilingual-e5-small use this for small models
+QDRANT_HOST = os.getenv("QDRANT_HOST", "0.0.0.0")
+QDRANT_PORT = os.getenv("QDRANT_PORT", 6333)
+COLLECTION_NAME=os.getenv("COLLECTION_NAME", "chatbot_context")
+VECTOR_SIZE=os.getenv("VECTOR_SIZE", 1024)
+HF_TOKEN = os.getenv("HF_TOKEN")
+KNOWLEDGE_BASE_PATH = os.getenv("KNOWLEDGE_BASE_PATH", "knowledge_bases")
+
+print(f"="*50)
+print(f"OLLAMA_BASE_URL: {OLLAMA_BASE_URL}\nLLM_MODEL: {LLM_MODEL}\nLLM_TEMP: {LLM_TEMP}\nEMB_MODEL: {EMB_MODEL}\nQDRANT_HOST: {QDRANT_HOST}\nQDRANT_PORT: {QDRANT_PORT}\nCOLLECTION_NAME: {COLLECTION_NAME}\nVECTOR_SIZE: {VECTOR_SIZE}")
+print(f"="*50)
