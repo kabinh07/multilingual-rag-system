@@ -61,7 +61,7 @@ class VectorDB:
         print(f"PDF Text: {full_text[:50]}")
         return full_text, file_path.split("/")[-1].strip()
 
-    def __create_chunks(self, text, chunk_size=500, chunk_overlap=50):
+    def __create_chunks(self, text, chunk_size=1000, chunk_overlap=50):
         splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,

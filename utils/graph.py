@@ -49,7 +49,9 @@ class Graph:
         return graph
     
     def __retrieve_context(self, query: str, k=3):
+        logger.info(f"\n\nRetrieving context for query: {query}\n\n")
         docs = self.vector_db.vector_store.similarity_search(query, k=k)
+        logger.info(f"\n\nRetrieved:\n{"\n".join([doc.page_content for doc in docs])}\n\n")
         return "\n".join([doc.page_content for doc in docs])
 
     def chatbot(self, state: State) -> State:
