@@ -22,9 +22,9 @@ class Graph:
             You are an multilingual question answering assistant.
 
             # Rule:
+            - **Response in the language of the user** and the as short as possible.
             - No need to say about the context if the user doesn't ask.
             - If the context is blank, response with "Not in my knowledge base".
-            - Response in the language of the user.
 
             Here is some context:
             {context}
@@ -48,7 +48,7 @@ class Graph:
 
         return graph
     
-    def __retrieve_context(self, query: str, k=3):
+    def __retrieve_context(self, query: str, k=10):
         logger.info(f"\n\nRetrieving context for query: {query}\n\n")
         docs = self.vector_db.vector_store.similarity_search(query, k=k)
         logger.info(f"\n\nRetrieved:\n{"\n".join([doc.page_content for doc in docs])}\n\n")

@@ -1,7 +1,10 @@
 import os
+import re
 import pymupdf
+from bangla_pdf_ocr import process_pdf
 import hashlib
 import json
+import unicodedata
 from qdrant_client import QdrantClient
 from qdrant_client.models import VectorParams, Distance
 from langchain_qdrant import QdrantVectorStore
@@ -40,9 +43,11 @@ class VectorDB:
         for file in files:
             file_path = os.path.join(folder_path, file)
             if file_path.endswith(".pdf"):
-                text, source_name = self.__load_pdf(file_path)
+                text = self.__load_broken_pdf(file_path)
+                text = self.__clean_full_text(text)
+                source_name = file_path.split("/")[-1].strip()
             else:
-                print(f"Only PDF files are supported")
+                print(f"Only PDF files are considered for now. Skipping {file}")
                 continue
             file_hash = self.__hash_file(text)
             if file_hash in self.hash_index:
@@ -55,17 +60,48 @@ class VectorDB:
             self.hash_index[file_hash] = source_name
         return
     
+    def __load_text(self, file_path):
+        with open(file_path, "r") as f:
+            full_text = f.read()
+        return unicodedata.normalize("NFC", full_text)
+    
+    def __load_broken_pdf(self, file_path):
+        full_text = process_pdf(file_path)
+        return unicodedata.normalize("NFC", full_text)
+    
     def __load_pdf(self, file_path):
         docs = pymupdf.open(file_path)
         full_text = "\n".join([doc.get_text() for doc in docs])
-        print(f"PDF Text: {full_text[:50]}")
-        return full_text, file_path.split("/")[-1].strip()
-
-    def __create_chunks(self, text, chunk_size=1000, chunk_overlap=50):
+        return unicodedata.normalize("NFC", full_text)
+    
+    def __clean_text(self, text):
+        text = re.sub(r'[\u200B-\u200D\uFEFF]', ' ', text)
+        text = re.sub(r'--- Page \d+ ---', ' ', text)
+        text = re.sub('[a-zA-Z0-9]', ' ', text)
+        text = re.sub(r'শব্দার্থ ও টীকা.*', ' ', text)
+        text = re.sub(r'সৃজনশীল প্রশ্ন.*', ' ', text)
+        text = re.sub(r'অনলাইন ব্যাচ.*', ' ', text)
+        text = re.sub(r'পাঠ্যপুস্তকের প্রশ্ন.*', ' ', text)
+        text = re.sub(r'বহুনির্বাচনী.*', ' ', text)
+        text = re.sub(r'শব্দের অর্থ ও ব্যাখ্যা.*', ' ', text)
+        text = re.sub( r'^[\W_]+$', ' ', text)
+        text = re.sub(r'\s+', ' ', text)
+        text = text.strip()
+        return text
+    
+    def __clean_full_text(self, text):
+        new_texts = []
+        for line in text.splitlines():
+            line = self.__clean_text(line)
+            if line != "":
+                new_texts.append(line)
+        return "\n".join(new_texts)
+    
+    def __create_chunks(self, text, chunk_size=500, chunk_overlap=10):
         splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
-            separators=["\n\n", "\n", ".", " "]
+            separators=["।", "\n", " "]
         )
         return splitter.split_text(text)
 
