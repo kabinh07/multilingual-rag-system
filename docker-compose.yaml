@@ -2,12 +2,10 @@ services:
   qdrant:
     container_name: qdrant
     build:
-      context: qdrant
+      context: ./qdrant
       dockerfile: Dockerfile
     ports:
       - "6333:6333"
-    # volumes:
-    #   - "./.qdrant_data:/qdrant_data"
     networks:
       - default
     healthcheck:
@@ -24,8 +22,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "11434:11434"
-    volumes:
-      - "./.ollama:/root/.ollama"
     networks:
       - default
     healthcheck:
@@ -42,7 +38,9 @@ services:
         condition: service_healthy
       ollama:
         condition: service_started
-    build: .
+    build:
+      context: ./app
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     networks:
