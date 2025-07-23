@@ -1,0 +1,6 @@
+__pycache__
+.ollama
+.venv
+Dockerfile
+.git
+.gitignore
