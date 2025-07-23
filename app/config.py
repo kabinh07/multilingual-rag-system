@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 # dotenv.load_dotenv()
 load_dotenv()
 
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "ollama:11434")
 LLM_MODEL = os.getenv("LLM_MODEL", "gemma3:1b")
 LLM_TEMP = os.getenv("LLM_TEMP", 0.0)
 EMB_MODEL = os.getenv("EMB_MODEL", "intfloat/multilingual-e5-base") #intfloat/multilingual-e5-small use this for small models
