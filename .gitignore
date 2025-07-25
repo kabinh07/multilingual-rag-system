@@ -1,5 +1,5 @@
 __pycache__
 .ollama
-
 .venv
+.cache
 app/tmp/*

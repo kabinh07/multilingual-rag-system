@@ -1,6 +1,6 @@
 import os
 import io
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 vector_db = VectorDB()
 graph = Graph(vector_db).get_graph(save_png=True)
-state = State(messages=[])
+state = State(messages=[SystemMessage(content="You are an multilingual question answering assistant.")])
 
 app.add_middleware(
     CORSMiddleware,

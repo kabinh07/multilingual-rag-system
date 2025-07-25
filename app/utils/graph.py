@@ -1,4 +1,6 @@
 import io
+import os
+import json
 from PIL import Image
 from langgraph.graph import StateGraph
 from langchain.prompts import PromptTemplate
@@ -6,7 +8,8 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_ollama import ChatOllama
 from utils.state import State
 from utils.vector_db import VectorDB
-from config import LLM_MODEL, OLLAMA_BASE_URL, LLM_TEMP
+from utils.utils import clean_full_text
+from config import LLM_MODEL, OLLAMA_BASE_URL, LLM_TEMP, STOPWORD_PATH
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,12 +19,14 @@ class Graph:
     def __init__(self, vector_db: VectorDB):
         self.llm = ChatOllama(model=LLM_MODEL, temperature=LLM_TEMP, base_url=OLLAMA_BASE_URL)
         self.vector_db = vector_db
+        self.stop_words = self.__get_stop_words(lang="bn")
         self.prompt = PromptTemplate(
             input_variables=["context", "query"],
             template="""
-            You are an multilingual question answering assistant.
+            Your task is to answer user's questions based on the context provided.
 
             # Rule:
+            - If the result is a single character (e.g. "ক", "খ", "গ", etc.), which means it's a mcq answer, then search the context for the answer. 
             - **Response in the language of the user** and the as short as possible.
             - No need to say about the context if the user doesn't ask.
             - If the context is blank, response with "Not in my knowledge base".
@@ -48,7 +53,14 @@ class Graph:
 
         return graph
     
+    def __get_stop_words(self, lang="bn"):
+        with open(os.path.join(STOPWORD_PATH, f"{lang}.json"), "r", encoding="utf-8") as f:
+            return json.load(f)
+    
     def __retrieve_context(self, query: str, k=10):
+        new_query = [word for word in query.split(" ") if word not in self.stop_words]
+        query = " ".join(new_query)
+        query = clean_full_text(query)
         logger.info(f"\n\nRetrieving context for query: {query}\n\n")
         docs = self.vector_db.vector_store.similarity_search(query, k=k)
         logger.info(f"\n\nRetrieved:\n{"\n".join([doc.page_content for doc in docs])}\n\n")
