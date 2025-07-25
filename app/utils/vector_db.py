@@ -49,11 +49,11 @@ class VectorDB:
                 if os.path.exists(file_path.replace(".pdf", ".txt")):
                     with open(file_path.replace(".pdf", ".txt"), "r", encoding="utf-8") as f:
                         text = f.read()
-                    text = clean_full_text(text, remove_mcqs=False)
+                    text = clean_full_text(text, remove_mcqs=True)
                     source_name = file_path.split("/")[-1].strip()
                 else:
                     text = self.__load_broken_pdf(file_path)
-                    text = clean_full_text(text, remove_mcqs=False)
+                    text = clean_full_text(text, remove_mcqs=True)
                     source_name = file_path.split("/")[-1].strip()
             else:
                 print(f"Only PDF files are considered for now. Skipping {file}")
@@ -73,7 +73,7 @@ class VectorDB:
         full_text = process_pdf(file_path)
         return unicodedata.normalize("NFC", full_text)
     
-    def __create_chunks(self, text, chunk_size=150, chunk_overlap=10):
+    def __create_chunks(self, text, chunk_size=200, chunk_overlap=10):
         splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,

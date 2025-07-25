@@ -58,13 +58,15 @@ class Graph:
             return json.load(f)
     
     def __retrieve_context(self, query: str, k=10):
-        new_query = [word for word in query.split(" ") if word not in self.stop_words]
-        query = " ".join(new_query)
+        # new_query = [word for word in query.split(" ") if word not in self.stop_words]
+        # query = " ".join(new_query)
         query = clean_full_text(query)
         logger.info(f"\n\nRetrieving context for query: {query}\n\n")
-        docs = self.vector_db.vector_store.similarity_search(query, k=k)
-        logger.info(f"\n\nRetrieved:\n{"\n".join([doc.page_content for doc in docs])}\n\n")
-        return "\n".join([doc.page_content for doc in docs])
+        docs = self.vector_db.vector_store.similarity_search_with_score(query, k=k)
+        for doc in docs:
+            print(f"\n\n{doc}\n\n")
+        logger.info(f"\n\nRetrieved:\n{"\n".join([doc[0].page_content for doc in docs])}\n\n")
+        return "\n".join([doc[0].page_content for doc in docs])
 
     def chatbot(self, state: State) -> State:
         user_messages = state["messages"].copy()
