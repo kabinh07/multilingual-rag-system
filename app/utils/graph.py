@@ -70,7 +70,6 @@ class Graph:
         user_messages = state["messages"].copy()
         context = self.__retrieve_context(user_messages[-1].content)
         user_messages[-1] = HumanMessage(content=self.prompt.format(context=context, query=user_messages[-1].content))
-        logger.info(f"LLM: {self.llm}")
         response = self.llm.invoke(user_messages)
         state["messages"].append(AIMessage(content=response.content, tool_calls=getattr(response, "tool_calls", [])))
         return state
