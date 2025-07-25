@@ -47,7 +47,7 @@ class VectorDB:
             file_path = os.path.join(folder_path, file)
             if file_path.endswith(".pdf"):
                 text = self.__load_broken_pdf(file_path)
-                text = self.clean_full_text(text)
+                text = clean_full_text(text)
                 source_name = file_path.split("/")[-1].strip()
             else:
                 print(f"Only PDF files are considered for now. Skipping {file}")
