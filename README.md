@@ -6,7 +6,7 @@ A multilingual question-answering system using RAG (Retrieval-Augmented Generati
 
 ### Prerequisites
 - Docker and Docker Compose
-- At least 8GB RAM
+- At least 16GB RAM
 
 ### Installation
 
