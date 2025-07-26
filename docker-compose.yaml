@@ -16,6 +16,13 @@ services:
       - "11434:11434"
     networks:
       - default
+    deploy:                       # Comment this out if there is no gpu support
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   app:
     container_name: app

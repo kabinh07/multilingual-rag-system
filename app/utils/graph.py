@@ -63,8 +63,6 @@ class Graph:
         query = clean_full_text(query)
         logger.info(f"\n\nRetrieving context for query: {query}\n\n")
         docs = self.vector_db.vector_store.similarity_search_with_score(query, k=k)
-        for doc in docs:
-            print(f"\n\n{doc}\n\n")
         logger.info(f"\n\nRetrieved:\n{"\n".join([doc[0].page_content for doc in docs])}\n\n")
         return "\n".join([doc[0].page_content for doc in docs])
 

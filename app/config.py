@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "ollama:11434")
-LLM_MODEL = os.getenv("LLM_MODEL", "gemma3:1b")
+LLM_MODEL = os.getenv("LLM_MODEL", "gemma3:12b")
 LLM_TEMP = os.getenv("LLM_TEMP", 0.0)
 EMB_MODEL = os.getenv("EMB_MODEL", "l3cube-pune/bengali-sentence-similarity-sbert") #intfloat/multilingual-e5-small use this for small models
 QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")

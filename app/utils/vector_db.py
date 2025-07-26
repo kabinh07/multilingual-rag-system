@@ -49,11 +49,11 @@ class VectorDB:
                 if os.path.exists(file_path.replace(".pdf", ".txt")):
                     with open(file_path.replace(".pdf", ".txt"), "r", encoding="utf-8") as f:
                         text = f.read()
-                    text = clean_full_text(text, remove_mcqs=True)
+                    text = clean_full_text(text, remove_mcqs=False)
                     source_name = file_path.split("/")[-1].strip()
                 else:
                     text = self.__load_broken_pdf(file_path)
-                    text = clean_full_text(text, remove_mcqs=True)
+                    text = clean_full_text(text, remove_mcqs=False)
                     source_name = file_path.split("/")[-1].strip()
             else:
                 print(f"Only PDF files are considered for now. Skipping {file}")
